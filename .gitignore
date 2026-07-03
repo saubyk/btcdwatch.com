@@ -1,0 +1,7 @@
+# Local config may contain RPC credentials — never commit it.
+config.yaml
+
+bin/
+web/node_modules/
+web/dist/
+.DS_Store

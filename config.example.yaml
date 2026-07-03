@@ -1,0 +1,33 @@
+# btcdwatchd configuration. Copy to config.yaml (gitignored) or override
+# any value with BTCDWATCH_* environment variables (env wins).
+#
+# In development, prefer scripts/dev.sh, which injects the regtest
+# credentials from btc-regtest-env via the environment.
+
+server:
+  listen: 127.0.0.1:8480
+
+node:
+  # mainnet | testnet3 | regtest | signet | simnet
+  network: regtest
+  rpc_host: 127.0.0.1:18334
+  rpc_user: CHANGE_ME
+  rpc_pass: CHANGE_ME
+  # Path to btcd's TLS certificate.
+  rpc_cert: /path/to/btcd/rpc.cert
+
+price:
+  # coingecko | static
+  source: coingecko
+  static_usd: 98000
+  refresh_seconds: 60
+
+fees:
+  # Minimum sat/vB per tier when the mempool gives no signal.
+  floor_slow: 1
+  floor_standard: 2
+  floor_urgent: 5
+
+address:
+  # History scan cap before totals are flagged approximate.
+  max_scan_txs: 2000
