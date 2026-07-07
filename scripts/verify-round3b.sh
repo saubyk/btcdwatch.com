@@ -41,7 +41,9 @@ cb=$(get "$API/api/block/$h" txs.0.txid)
 cbin=$(get "$API/api/tx/$cb" type.in)
 cbcode=$(get "$API/api/tx/$cb" type.code)
 cbrbf=$(get "$API/api/tx/$cb" rbf)
-[ "$cbin" = '""' ] || [ -z "$cbin" ]; check $? "coinbase: in empty, out-only code" "code=$cbcode rbf=$cbrbf"
+# cbcode must be present (not just cbin absent) or the server predates r3b.
+[ -n "$cbcode" ] && { [ "$cbin" = '""' ] || [ -z "$cbin" ]; }
+check $? "coinbase: in empty, out-only code" "code=$cbcode rbf=$cbrbf"
 [ "$cbrbf" = "false" ]; check $? "coinbase never signals RBF" ""
 
 echo "— address type —"
