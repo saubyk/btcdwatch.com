@@ -42,9 +42,15 @@ func New(svc *explorer.Service, backend node.Backend,
 	mux.HandleFunc("GET /api/fees", s.handleFees)
 	mux.HandleFunc("GET /api/stats", s.handleStats)
 	mux.HandleFunc("GET /api/ws", s.handleWS)
+	// Unknown /api paths are JSON 404s, never the SPA fallback (every
+	// specific /api route above wins over this catch-all).
+	mux.HandleFunc("/api/", func(w http.ResponseWriter, r *http.Request) {
+		writeError(w, http.StatusNotFound, "unknown_endpoint",
+			"unknown API endpoint")
+	})
 	if static != nil {
-		// "/" is the least specific pattern, so every /api route above
-		// still wins.
+		// "/" is the least specific pattern, so every route above still
+		// wins.
 		mux.Handle("/", static)
 	}
 	return mux
