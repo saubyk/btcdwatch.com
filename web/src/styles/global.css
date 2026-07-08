@@ -215,9 +215,10 @@ input::placeholder {
 }
 
 /* ===== Live mempool queue ===== */
+/* Round 4: follows the stats bar (28px), which now takes the hero's 52px. */
 .bp-mempool-section {
   max-width: 1000px;
-  margin: 52px auto 0;
+  margin: 28px auto 0;
   padding: 0 22px;
 }
 .bp-mempool-card {
@@ -694,8 +695,8 @@ input::placeholder {
 /* ===== Stats bar ===== */
 .bp-stats-section {
   max-width: 1000px;
-  margin: 28px auto 0;
-  padding: 0 22px 64px;
+  margin: 52px auto 0;
+  padding: 0 22px;
 }
 .bp-stats-bar {
   display: grid;
@@ -728,9 +729,11 @@ input::placeholder {
 }
 
 /* ===== Node CTA ===== */
+/* Owns its 72px top gap so it holds whichever section precedes it
+   (mempool, stats, or the hero when both flags are off). */
 .bp-cta-section {
   max-width: 1000px;
-  margin: 8px auto 0;
+  margin: 72px auto 0;
   padding: 0 22px 64px;
 }
 .bp-cta-card {
@@ -1540,6 +1543,126 @@ button.bp-tile-item--link:hover {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   flex-wrap: wrap;
+}
+
+/* ===== Address links (round-4 shared token) ===== */
+.bp-addr-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--bp-mono);
+  font-size: inherit;
+  color: var(--bp-orange-text);
+  line-height: 1.55;
+  text-decoration: underline;
+  text-decoration-color: #ebd3a8;
+  text-underline-offset: 3px;
+}
+.bp-addr-link:hover {
+  color: var(--bp-orange-deep);
+}
+.bp-addr-link--break {
+  word-break: break-all;
+}
+
+/* ===== Inputs/outputs card (Detailed tab) ===== */
+.bp-io-card {
+  border: 1px solid var(--bp-divider-3);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+.bp-io-head {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--bp-divider);
+  background: var(--bp-inset);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bp-text-label);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.bp-io-count {
+  font-family: var(--bp-mono);
+  color: #b59a78;
+}
+.bp-io-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--bp-divider);
+  flex-wrap: wrap;
+}
+.bp-io-main {
+  flex: 1;
+  min-width: 200px;
+  font-size: 12.5px;
+}
+.bp-io-main .bp-io-role {
+  display: inline-block;
+  margin-top: 4px;
+}
+.bp-io-plain {
+  font-size: 12.5px;
+  color: var(--bp-text-muted);
+}
+.bp-io-role {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--bp-green-deep);
+  background: var(--bp-green-tint-2);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.bp-io-role--change {
+  color: #7c6e5c;
+  background: #f4ece0;
+}
+.bp-io-amount {
+  font-family: var(--bp-mono);
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.bp-io-foot {
+  padding: 11px 16px;
+  background: var(--bp-inset);
+  font-size: 12px;
+  color: var(--bp-text-label);
+  line-height: 1.5;
+}
+.bp-io-foot strong {
+  color: var(--bp-text-body);
+  font-family: var(--bp-mono);
+}
+
+/* ===== Pending: receiving address verification ===== */
+.bp-receiving {
+  margin-top: 14px;
+  background: var(--bp-tile);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.bp-receiving-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--bp-text-label);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 5px;
+}
+.bp-receiving-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+}
+.bp-receiving-row .bp-addr-link {
+  flex: 1;
+  min-width: 0;
 }
 
 /* ===== Script-type chips ===== */

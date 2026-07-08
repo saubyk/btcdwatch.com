@@ -195,6 +195,9 @@ Response envelope:
   "from": ["bcrt1q..."],
   "to":   ["bcrt1q..."],
   "isCoinbase": false,
+  "inputs":  [ { "address": "bcrt1q...", "amountSats": 6000000, "change": false } ],
+  "outputs": [ { "address": "bcrt1q...", "amountSats": 4250000, "change": false },
+               { "address": "bcrt1q...", "amountSats": 1748740, "change": true  } ],
   "confirmations": 3,
   "block": { "height": 512, "hash": "hex", "time": 1735000000 },   // null while pending
   "feeSats": 141,                        // null for coinbase ("newly minted")
@@ -515,6 +518,13 @@ mainnet prefix rules are deliberately not reproduced), transaction sides by btcd
 and addresses). A transaction's headline code is the dominant input type, falling back to the
 output type (coinbase); friendly names and explainer copy live in the frontend
 (`web/src/lib/scriptTypes.ts`), keyed by code.
+
+### Inputs / outputs rows (Detailed tab)
+
+`inputs`/`outputs` carry one row per vin/vout — first address (or the non-standard placeholder)
+plus amount — for the Detailed tab's breakdown card. `change` on an output comes from the same
+heuristic the amount derivation uses, so the role chips always agree with the headline amount.
+Coinbases have no input rows.
 
 ### From / to heuristics (beginner view)
 

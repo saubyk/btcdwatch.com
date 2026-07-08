@@ -3,6 +3,7 @@ import { ConfirmationProgress } from '../components/ConfirmationProgress'
 import { CheckIcon, CopyIcon } from '../components/Icons'
 import { AmountHeader, BackButton, StatTile } from '../components/ResultParts'
 import { useCopy } from '../components/Toast'
+import { TxIOCard } from '../components/TxIOCard'
 import {
   formatNumber,
   formatRelative,
@@ -63,7 +64,7 @@ export function ConfirmedTx({
         </div>
 
         <div className="bp-card-body">
-          <AmountHeader tx={tx} />
+          <AmountHeader tx={tx} onSearch={onSearch} />
 
           <div className="bp-tiles">
             <StatTile label="Confirmations">
@@ -120,7 +121,10 @@ export function ConfirmedTx({
               </p>
             </div>
           ) : (
-            <DetailTable tx={tx} copy={copy} />
+            <>
+              <DetailTable tx={tx} copy={copy} />
+              <TxIOCard tx={tx} onSearch={onSearch} />
+            </>
           )}
         </div>
       </div>

@@ -31,6 +31,8 @@ export function Landing({
         <SearchBar onSearch={onSearch} />
       </section>
 
+      {/* Round 4: high-level stats first, then the detailed queue. */}
+      {appConfig.showStats && <StatsBar stats={data.stats} />}
       {appConfig.showMempool && (
         <MempoolQueue
           stats={data.stats}
@@ -39,7 +41,6 @@ export function Landing({
           onSearch={onSearch}
         />
       )}
-      {appConfig.showStats && <StatsBar stats={data.stats} />}
       <NodeCta />
     </main>
   )
