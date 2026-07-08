@@ -23,6 +23,13 @@ export interface TxType {
   out: string
 }
 
+/** One input/output row of the detail card; change is outputs-only. */
+export interface TxIO {
+  address: string
+  amountSats: number
+  change: boolean
+}
+
 export interface Tx {
   txid: string
   status: 'pending' | 'confirmed'
@@ -31,6 +38,8 @@ export interface Tx {
   from: string[]
   to: string[]
   isCoinbase: boolean
+  inputs: TxIO[]
+  outputs: TxIO[]
   confirmations: number
   block: TxBlock | null
   feeSats: number | null

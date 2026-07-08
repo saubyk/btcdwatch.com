@@ -1,12 +1,54 @@
 import type { Dispatch } from 'react'
 
 import type { FeeEstimate, Stats, Tx } from '../api/types'
-import { ClockIcon } from '../components/Icons'
+import { AddressLink, isLinkableAddress } from '../components/AddressLink'
+import { ClockIcon, CopyIcon } from '../components/Icons'
 import { QueueBar } from '../components/QueueBar'
 import { AmountHeader, BackButton, StatTile } from '../components/ResultParts'
+import { useCopy } from '../components/Toast'
 import { useWatchTx } from '../hooks/useWatchTx'
 import { formatEta, formatNumber } from '../lib/format'
 import type { Action } from '../state'
+
+/** Full destination address so recipients can verify it matches theirs. */
+function ReceivingAddress({
+  tx,
+  onSearch,
+}: {
+  tx: Tx
+  onSearch: (q: string) => void
+}) {
+  const copy = useCopy()
+  const addr = tx.to[0]
+  // Only when the destination is unambiguous: a batch payment can't know
+  // which output is "yours", and a self-send's To is the sender's own
+  // change.
+  if (
+    tx.to.length !== 1 ||
+    !isLinkableAddress(addr) ||
+    tx.from.includes(addr)
+  ) {
+    return null
+  }
+
+  return (
+    <div className="bp-receiving">
+      <div className="bp-receiving-label">
+        Receiving address — check it matches yours
+      </div>
+      <div className="bp-receiving-row">
+        <AddressLink address={addr} breakAll onSearch={onSearch} />
+        <button
+          className="bp-copy-icon-btn"
+          title="Copy address"
+          onClick={() => copy(addr)}
+        >
+          <CopyIcon />
+        </button>
+      </div>
+    </div>
+  )
+}
 
 export function PendingTx({
   tx,
@@ -14,6 +56,7 @@ export function PendingTx({
   stats,
   watching,
   dispatch,
+  onSearch,
   onHome,
 }: {
   tx: Tx
@@ -21,6 +64,7 @@ export function PendingTx({
   stats: Stats | null
   watching: boolean
   dispatch: Dispatch<Action>
+  onSearch: (q: string) => void
   onHome: () => void
 }) {
   const watch = useWatchTx(tx.txid, watching, dispatch)
@@ -48,7 +92,9 @@ export function PendingTx({
         </div>
 
         <div className="bp-card-body">
-          <AmountHeader tx={tx} />
+          <AmountHeader tx={tx} onSearch={onSearch} />
+
+          <ReceivingAddress tx={tx} onSearch={onSearch} />
 
           {tx.pending && (
             <div className="bp-wait-panel">

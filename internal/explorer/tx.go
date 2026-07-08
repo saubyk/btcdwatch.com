@@ -49,6 +49,16 @@ type TxPending struct {
 	QueueVbytesFraction float64 `json:"queueVbytesFraction"`
 }
 
+// TxIO is one input or output row of the detail card. Address is the
+// first (usually only) address, or the non-standard label; Change is
+// meaningful on outputs only — the heuristic attributed it back to the
+// sender.
+type TxIO struct {
+	Address    string `json:"address"`
+	AmountSats int64  `json:"amountSats"`
+	Change     bool   `json:"change"`
+}
+
 // TxType classifies a transaction's script types. In is empty for
 // coinbases (no real inputs); Code is the headline chip — the dominant
 // input type, falling back to the output type.
@@ -68,6 +78,8 @@ type Tx struct {
 	From            []string `json:"from"`
 	To              []string `json:"to"`
 	IsCoinbase      bool     `json:"isCoinbase"`
+	Inputs          []TxIO   `json:"inputs"`
+	Outputs         []TxIO   `json:"outputs"`
 	Confirmations   int64    `json:"confirmations"`
 	Block           *TxBlock `json:"block"`
 	FeeSats         *int64   `json:"feeSats"`
@@ -187,6 +199,8 @@ func (s *Service) GetTx(txid string) (*Tx, error) {
 		VSize:         int64(raw.Vsize),
 		From:          []string{},
 		To:            []string{},
+		Inputs:        []TxIO{},
+		Outputs:       []TxIO{},
 	}
 	if tx.VSize == 0 {
 		tx.VSize = int64(raw.Size)
@@ -207,6 +221,10 @@ func (s *Service) GetTx(txid string) (*Tx, error) {
 		for _, in := range ins {
 			sumInSats += in.valueSats
 			inCodes = append(inCodes, in.scriptType)
+			tx.Inputs = append(tx.Inputs, TxIO{
+				Address:    firstAddr(in.addrs),
+				AmountSats: in.valueSats,
+			})
 			for _, a := range in.addrs {
 				if !seen[a] {
 					seen[a] = true
@@ -291,7 +309,13 @@ func (s *Service) deriveOutputs(tx *Tx, vouts []btcjson.Vout,
 	for _, v := range vouts {
 		sats := satsFromBTC(v.Value)
 		sumOutSats += sats
-		if isChange(voutAddrs(v)) {
+		change := isChange(voutAddrs(v))
+		tx.Outputs = append(tx.Outputs, TxIO{
+			Address:    firstAddr(voutAddrs(v)),
+			AmountSats: sats,
+			Change:     change,
+		})
+		if change {
 			continue
 		}
 		amountSats += sats
@@ -299,12 +323,15 @@ func (s *Service) deriveOutputs(tx *Tx, vouts []btcjson.Vout,
 		outCodes = append(outCodes, chain.ScriptTypeFromRPC(v.ScriptPubKey.Type))
 	}
 
-	// Self-send: every output looked like change. Count them all.
+	// Self-send: every output looked like change. Count them all — and
+	// unflag the rows so the IO card agrees with the headline (the
+	// sender is the recipient).
 	if len(toAddrs) == 0 {
 		amountSats = sumOutSats
-		for _, v := range vouts {
+		for i, v := range vouts {
 			addTo(voutAddrs(v))
 			outCodes = append(outCodes, chain.ScriptTypeFromRPC(v.ScriptPubKey.Type))
+			tx.Outputs[i].Change = false
 		}
 	}
 
@@ -557,6 +584,14 @@ func voutAddrs(v btcjson.Vout) []string {
 		return []string{v.ScriptPubKey.Address}
 	}
 	return nil
+}
+
+// firstAddr picks the row address for the inputs/outputs card.
+func firstAddr(addrs []string) string {
+	if len(addrs) == 0 {
+		return nonStandardLabel
+	}
+	return addrs[0]
 }
 
 // satsFromBTC converts a btcjson BTC float to satoshis with proper

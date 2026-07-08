@@ -70,6 +70,7 @@ export function App() {
             stats={data.stats}
             watching={state.watching}
             dispatch={dispatch}
+            onSearch={search}
             onHome={goHome}
           />
         ) : null

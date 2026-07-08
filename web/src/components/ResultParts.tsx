@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 
 import type { Tx } from '../api/types'
 import { formatBtc, formatFiat, truncateMiddle } from '../lib/format'
+import { AddressLink } from './AddressLink'
 import { TypeChips } from './TypeChips'
 
 export function BackButton({ onClick }: { onClick: () => void }) {
@@ -12,8 +13,15 @@ export function BackButton({ onClick }: { onClick: () => void }) {
   )
 }
 
-/** Big BTC amount + fiat + from→to line + script-type chips. */
-export function AmountHeader({ tx }: { tx: Tx }) {
+/** Big BTC amount + fiat + from→to line + script-type chips. Addresses
+ * link into the Address view. */
+export function AmountHeader({
+  tx,
+  onSearch,
+}: {
+  tx: Tx
+  onSearch: (q: string) => void
+}) {
   return (
     <>
       <div className="bp-amount-row">
@@ -28,10 +36,10 @@ export function AmountHeader({ tx }: { tx: Tx }) {
         {tx.isCoinbase ? (
           <span>newly minted</span>
         ) : (
-          <span>{formatAddrList(tx.from)}</span>
+          <AddrListLink addrs={tx.from} onSearch={onSearch} />
         )}
         <span className="bp-fromto-arrow">→</span>
-        <span>{formatAddrList(tx.to)}</span>
+        <AddrListLink addrs={tx.to} onSearch={onSearch} />
       </div>
       {(tx.type || (tx.rbf && tx.status === 'pending')) && (
         <div className="bp-type-chips">
@@ -50,10 +58,25 @@ export function AmountHeader({ tx }: { tx: Tx }) {
   )
 }
 
-function formatAddrList(addrs: string[]): string {
-  if (addrs.length === 0) return '—'
-  const first = truncateMiddle(addrs[0]!)
-  return addrs.length > 1 ? `${first} +${addrs.length - 1}` : first
+/** First address as a truncated link, "+N" plain for the rest. */
+function AddrListLink({
+  addrs,
+  onSearch,
+}: {
+  addrs: string[]
+  onSearch: (q: string) => void
+}) {
+  if (addrs.length === 0) return <span>—</span>
+  return (
+    <span>
+      <AddressLink
+        address={addrs[0]!}
+        display={truncateMiddle(addrs[0]!)}
+        onSearch={onSearch}
+      />
+      {addrs.length > 1 && ` +${addrs.length - 1}`}
+    </span>
+  )
 }
 
 export function StatTile({
