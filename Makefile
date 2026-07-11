@@ -4,7 +4,9 @@
 build: web-build go-build
 
 web-build:
-	cd web && npm install --no-audit --no-fund && npm run build
+	# npm ci: reproducible install that never rewrites package-lock.json —
+	# an install that dirtied it used to break upgrade.sh's clean-tree check.
+	cd web && npm ci --no-audit --no-fund && npm run build
 	@touch web/dist/.keep # vite empties dist; restore the committed embed placeholder
 
 go-build:
