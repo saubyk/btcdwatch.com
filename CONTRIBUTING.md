@@ -15,21 +15,23 @@ Requirements:
 - **btcd 0.26+** with `txindex=1` and `addrindex=1`, websocket RPC enabled.
 - **Go 1.25+** and **Node 22+**.
 
-For development the app expects RPC credentials from the environment. The
-simplest path is a `btc-regtest-env`-style harness as a sibling directory
-whose `scripts/env.sh` supplies regtest credentials and keeps a miner and
-transaction generator running, so real pending/confirmed data exists from
-the first request. Any btcd node also works via `config.yaml` (copy
+The app needs a btcd node to talk to. The simplest path is the bundled Docker
+harness ([`harness/README.md`](harness/README.md)), which brings up btcd plus a
+miner and transaction generator so real pending/confirmed data exists from the
+first request. Any btcd node also works via `config.yaml` (copy
 `config.example.yaml`) or `BTCDWATCH_*` environment variables.
 
-Run the two dev processes with hot reload:
+Run the harness, then the two dev processes with hot reload:
 
 ```sh
-./scripts/dev.sh                       # Go API on :8480 (make dev)
+make regtest-up                        # btcd + miner/txgen in Docker
+go run ./cmd/btcdwatchd                # Go API on :8480 — see harness/README.md
+                                       #   for the BTCDWATCH_* env it needs
 cd web && npm install && npm run dev   # SPA on :5174, /api proxied
 ```
 
-Then open <http://localhost:5174>.
+Then open <http://localhost:5174>. (`./scripts/dev.sh` / `make dev` is a
+shortcut that injects credentials from a local harness, if you run your own.)
 
 ## Common commands
 
