@@ -71,11 +71,12 @@ type MempoolUpdate struct {
 	Arrivals []Arrival `json:"arrivals"`
 }
 
-// MempoolUpdate assembles the payload from one consistent snapshot read.
-// Buffered arrivals not (yet) in the snapshot are skipped: either the
-// refresh throttle hasn't caught up (they appear on the next push) or the
-// tx was already mined or evicted.
-func (s *Service) MempoolUpdate() (*MempoolUpdate, error) {
+// computeMempoolUpdate assembles the payload from one consistent snapshot
+// read. Buffered arrivals not (yet) in the snapshot are skipped: either
+// the refresh hasn't caught up (they appear on the next push) or the tx
+// was already mined or evicted. Blocks on node RPC — called only from the
+// live-cache refresh (see live.go).
+func (s *Service) computeMempoolUpdate() (*MempoolUpdate, error) {
 	snapshot, queue, err := s.mempool.SnapshotAndQueue()
 	if err != nil {
 		return nil, err

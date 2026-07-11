@@ -132,10 +132,11 @@ func (s *Service) refreshSync() {
 		time.Since(time.Unix(tipTime, 0)) > syncedMaxTipAge
 }
 
-// Stats assembles the landing-page dashboard numbers. Mempool count/bytes
-// come from the shared snapshot (btcd's rpcclient has no getmempoolinfo
-// wrapper, and the snapshot is already warm).
-func (s *Service) Stats() (*Stats, error) {
+// computeStats assembles the landing-page dashboard numbers. Mempool
+// count/bytes come from the shared snapshot (btcd's rpcclient has no
+// getmempoolinfo wrapper). Blocks on node RPC — called only from the
+// live-cache refresh (see live.go), never on the request path.
+func (s *Service) computeStats() (*Stats, error) {
 	tip, err := s.backend.GetBlockCount()
 	if err != nil {
 		return nil, err

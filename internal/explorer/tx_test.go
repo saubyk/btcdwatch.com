@@ -6,6 +6,8 @@ import (
 
 	"github.com/btcsuite/btcd/btcjson"
 	"github.com/btcsuite/btcd/chaincfg/v2"
+
+	"btcdwatch.com/internal/node"
 )
 
 const (
@@ -14,7 +16,7 @@ const (
 	addrB1 = "bcrt1qrecipient"
 )
 
-func newTestService(m *mockBackend) *Service {
+func newTestService(m node.Backend) *Service {
 	return NewService(m, Config{
 		Params: &chaincfg.RegressionNetParams,
 		Price: func() PriceQuote {
