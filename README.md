@@ -23,20 +23,24 @@ from any view.
 
 - **btcd 0.26+** with `txindex=1` and `addrindex=1`, websocket RPC enabled.
 - Go 1.25+, Node 22+ (for building the frontend).
-- Development assumes the `btc-regtest-env` harness as a sibling directory
-  (its `scripts/env.sh` provides RPC credentials); any btcd works via
-  config/env.
+- A btcd node to talk to. The bundled Docker harness gives you one with live
+  regtest traffic and zero setup (`make regtest-up`; see
+  [harness/README.md](harness/README.md)); any btcd also works via config/env.
 
 ## Quickstart (development)
 
-Two processes with hot reload:
+Bring up a regtest node with live traffic, then run the two app processes with
+hot reload:
 
 ```sh
-./scripts/dev.sh            # Go API on :8480 (creds from btc-regtest-env)
-cd web && npm install && npm run dev   # SPA on :5174, /api proxied
+make regtest-up                         # btcd + miner/txgen in Docker
+go run ./cmd/btcdwatchd                 # Go API on :8480 — see harness/README.md
+                                        #   for the BTCDWATCH_* env it needs
+cd web && npm install && npm run dev    # SPA on :5174, /api proxied
 ```
 
-Open <http://localhost:5174>.
+Open <http://localhost:5174>. (`./scripts/dev.sh` is a shortcut that injects RPC
+credentials from a local harness, if you run your own instead of the Docker one.)
 
 ## Production build (single binary)
 
@@ -100,13 +104,13 @@ in CI-style usage: `go test ./... -race`.
 ### End-to-end recipe (regtest)
 
 This exercises the live flows against a regtest node that is actively
-producing traffic. It needs an **external** harness — the `btc-regtest-env`
-used in development, or any equivalent that mines blocks and generates
-transactions on a loop. Those harness scripts are not part of this
-repository.
+producing traffic. The bundled Docker harness provides exactly that — see
+[harness/README.md](harness/README.md).
 
-1. Start your regtest node with a miner and a transaction generator running,
-   then launch the app with `./scripts/dev.sh` + Vite (or the single binary).
+1. `make regtest-up` starts btcd plus a miner/txgen; point `btcdwatchd` at it
+   (env in [harness/README.md](harness/README.md)) and run the SPA with `npm run
+   dev` (or the single binary). `bash harness/scripts/verify.sh` is a quick
+   read-only check that data is flowing.
 2. Take a fresh txid from the generated traffic → the pending view shows your
    place in the mempool queue and the estimated wait.
 3. Press **🔔 Watch this transaction** → the panel shows it is live-connected;
