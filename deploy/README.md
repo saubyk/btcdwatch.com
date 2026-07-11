@@ -60,7 +60,7 @@ sudo chgrp btcdwatch /var/lib/btcd/rpc.cert && sudo chmod 640 /var/lib/btcd/rpc.
 ## 3. btcdwatchd
 
 ```sh
-sudo -iu btcdwatch git clone https://github.com/saubyk/btcdwatch.com.git
+sudo -iu btcdwatch git clone https://github.com/saubyk/btcd.watch.git
 sudo cp deploy/config.yaml.example /etc/btcdwatch/config.yaml
 sudo vi /etc/btcdwatch/config.yaml   # paste the rpcuser/rpcpass from step 2
 sudo chown root:btcdwatch /etc/btcdwatch/config.yaml && sudo chmod 640 /etc/btcdwatch/config.yaml
@@ -72,7 +72,7 @@ sudo systemctl daemon-reload && sudo systemctl enable btcdwatchd
 First deploy (and every upgrade) is tags-only:
 
 ```sh
-sudo -iu btcdwatch bash -c 'cd btcdwatch.com && ./deploy/upgrade.sh v1.0.0'
+sudo -iu btcdwatch bash -c 'cd btcd.watch && ./deploy/upgrade.sh v1.0.0'
 ```
 
 `upgrade.sh` refuses dirty trees and unknown tags, keeps the previous binary,

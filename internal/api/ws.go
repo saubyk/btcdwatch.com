@@ -9,7 +9,7 @@ import (
 	"github.com/btcsuite/btcd/chaincfg/v2"
 	"github.com/gorilla/websocket"
 
-	"btcdwatch.com/internal/chain"
+	"btcd.watch/internal/chain"
 )
 
 const (

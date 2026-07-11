@@ -1,4 +1,4 @@
-module btcdwatch.com
+module btcd.watch
 
 go 1.25.5
 

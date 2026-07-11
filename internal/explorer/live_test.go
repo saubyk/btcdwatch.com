@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"btcdwatch.com/internal/node"
+	"btcd.watch/internal/node"
 )
 
 // The live feeds are cache-served: requests must never wait on node RPC

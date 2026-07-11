@@ -7,8 +7,8 @@ import (
 
 	"github.com/btcsuite/btcd/chaincfg/v2"
 
-	"btcdwatch.com/internal/explorer"
-	"btcdwatch.com/internal/node"
+	"btcd.watch/internal/explorer"
+	"btcd.watch/internal/node"
 )
 
 // Server routes the /api endpoints.

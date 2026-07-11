@@ -7,7 +7,7 @@ import (
 	"github.com/btcsuite/btcd/btcjson"
 	"github.com/btcsuite/btcd/chainhash/v2"
 
-	"btcdwatch.com/internal/chain"
+	"btcd.watch/internal/chain"
 )
 
 // ErrBlockNotFound is returned for unknown heights and hashes.
