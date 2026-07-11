@@ -100,6 +100,11 @@ func run() error {
 	go hub.Run(hubCtx)
 
 	backend.Start(node.Handlers{
+		OnConnect: func() {
+			// Warm the live cache so the first requests after a
+			// (re)connect serve fresh values instead of 503s.
+			svc.WarmLive()
+		},
 		OnBlock: func(_ int32, hash string) {
 			svc.OnBlock()
 			hub.NotifyBlock(hash)

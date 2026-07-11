@@ -36,7 +36,7 @@ func TestStats(t *testing.T) {
 		Vsize: 300, Size: 320, Fee: 0.0002, Time: 2,
 	}
 
-	stats, err := newTestService(m).Stats()
+	stats, err := newTestService(m).computeStats()
 	if err != nil {
 		t.Fatal(err)
 	}

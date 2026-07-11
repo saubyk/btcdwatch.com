@@ -16,7 +16,7 @@ func addMempoolTx(m *mockBackend, label string, rateSatPerVb float64, vsize int3
 
 func TestFeesEmptyMempoolUsesFloors(t *testing.T) {
 	m := newMockBackend()
-	fees, err := newTestService(m).Fees()
+	fees, err := newTestService(m).computeFees()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -39,7 +39,7 @@ func TestFeesWeightedPercentiles(t *testing.T) {
 		addMempoolTx(m, string(rune('a'+i)), float64(i*10), 100)
 	}
 
-	fees, err := newTestService(m).Fees()
+	fees, err := newTestService(m).computeFees()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,7 +63,7 @@ func TestFeesWeighting(t *testing.T) {
 	addMempoolTx(m, "shrimp1", 50, 500)
 	addMempoolTx(m, "shrimp2", 100, 500)
 
-	fees, err := newTestService(m).Fees()
+	fees, err := newTestService(m).computeFees()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -85,7 +85,7 @@ func TestFeesFloorsAndMonotonic(t *testing.T) {
 		addMempoolTx(m, l, 0.5, 200)
 	}
 
-	fees, err := newTestService(m).Fees()
+	fees, err := newTestService(m).computeFees()
 	if err != nil {
 		t.Fatal(err)
 	}

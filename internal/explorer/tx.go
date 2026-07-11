@@ -153,6 +153,13 @@ type Service struct {
 
 	arrivalsMu sync.Mutex
 	arrivals   []arrival
+
+	// Cached live feeds, recomputed in the background (see live.go).
+	liveMu        sync.Mutex
+	live          liveData
+	liveAttemptAt time.Time
+	liveKickedAt  time.Time
+	liveInFlight  bool
 }
 
 func NewService(backend node.Backend, cfg Config) *Service {

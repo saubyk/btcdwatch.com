@@ -2,6 +2,7 @@ package explorer
 
 import (
 	"strings"
+	"sync"
 
 	"github.com/btcsuite/btcd/address/v2"
 	"github.com/btcsuite/btcd/btcjson"
@@ -22,6 +23,25 @@ type mockBackend struct {
 	txFetches      map[string]int
 	mempoolFetches int
 	searchFetches  int
+
+	// errAll, when set via failAll, fails the calls the live-cache
+	// refresh depends on — simulates the node going away between
+	// refreshes. Mutex-guarded: tests flip it while background refresh
+	// goroutines read it.
+	errMu  sync.Mutex
+	errAll error
+}
+
+func (m *mockBackend) failAll(err error) {
+	m.errMu.Lock()
+	m.errAll = err
+	m.errMu.Unlock()
+}
+
+func (m *mockBackend) allErr() error {
+	m.errMu.Lock()
+	defer m.errMu.Unlock()
+	return m.errAll
 }
 
 func newMockBackend() *mockBackend {
@@ -72,6 +92,9 @@ func (m *mockBackend) GetBlockHash(height int64) (*chainhash.Hash, error) {
 }
 
 func (m *mockBackend) GetBlockCount() (int64, error) {
+	if err := m.allErr(); err != nil {
+		return 0, err
+	}
 	return m.tip, nil
 }
 

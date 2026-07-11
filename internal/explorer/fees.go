@@ -28,11 +28,12 @@ type FeeEstimate struct {
 	Source string    `json:"source"` // "mempool" | "floor"
 }
 
-// Fees derives the three tiers. btcd has no estimatesmartfee, so rates are
-// vsize-weighted feerate percentiles of the mempool snapshot — p25 (slow),
-// p50 (standard), p90 (urgent) — clamped to the configured floors, forced
-// monotonic, minimum 1 sat/vB.
-func (s *Service) Fees() (*FeeEstimate, error) {
+// computeFees derives the three tiers. btcd has no estimatesmartfee, so
+// rates are vsize-weighted feerate percentiles of the mempool snapshot —
+// p25 (slow), p50 (standard), p90 (urgent) — clamped to the configured
+// floors, forced monotonic, minimum 1 sat/vB. Blocks on node RPC — called
+// only from the live-cache refresh (see live.go).
+func (s *Service) computeFees() (*FeeEstimate, error) {
 	snapshot, err := s.mempool.Snapshot()
 	if err != nil {
 		return nil, err

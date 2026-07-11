@@ -24,7 +24,7 @@ func TestMempoolUpdateResolvesArrivals(t *testing.T) {
 	noteArrival(svc, m, "first", 8, 140, 0.5)
 	noteArrival(svc, m, "second", 3, 200, 1.25)
 
-	update, err := svc.MempoolUpdate()
+	update, err := svc.computeMempoolUpdate()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,7 +55,7 @@ func TestMempoolUpdateSkipsUnresolvedArrivals(t *testing.T) {
 	})
 	noteArrival(svc, m, "real", 5, 150, 0.25)
 
-	update, err := svc.MempoolUpdate()
+	update, err := svc.computeMempoolUpdate()
 	if err != nil {
 		t.Fatal(err)
 	}
