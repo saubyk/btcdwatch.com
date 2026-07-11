@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"btcdwatch.com/web"
+	"btcd.watch/web"
 )
 
 // StaticHandler serves the SPA: the embedded web/dist by default, or an

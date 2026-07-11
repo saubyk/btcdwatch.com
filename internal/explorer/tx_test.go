@@ -7,7 +7,7 @@ import (
 	"github.com/btcsuite/btcd/btcjson"
 	"github.com/btcsuite/btcd/chaincfg/v2"
 
-	"btcdwatch.com/internal/node"
+	"btcd.watch/internal/node"
 )
 
 const (

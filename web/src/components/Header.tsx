@@ -22,7 +22,7 @@ export function Header({
         <button className="bp-logo-btn" onClick={onHome} aria-label="Home">
           <span className="bp-logo-mark">₿</span>
           <span className="bp-wordmark">
-            btcdwatch<span className="bp-wordmark-tld">.com</span>
+            btcd<span className="bp-wordmark-tld">.watch</span>
           </span>
         </button>
         <button

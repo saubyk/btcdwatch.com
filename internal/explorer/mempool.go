@@ -6,7 +6,7 @@ import (
 
 	"github.com/btcsuite/btcd/btcutil/v2"
 
-	"btcdwatch.com/internal/node"
+	"btcd.watch/internal/node"
 )
 
 // snapshotMaxAge bounds how stale the shared mempool snapshot may be before

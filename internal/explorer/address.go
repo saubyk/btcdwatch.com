@@ -7,7 +7,7 @@ import (
 	"github.com/btcsuite/btcd/btcjson"
 	"github.com/btcsuite/btcd/btcutil/v2"
 
-	"btcdwatch.com/internal/chain"
+	"btcd.watch/internal/chain"
 )
 
 // scanChunk is the page size used when walking address history for

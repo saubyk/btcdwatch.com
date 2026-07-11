@@ -1,4 +1,4 @@
-// btcdwatchd is the btcdwatch.com server: a REST (and, in later
+// btcdwatchd is the btcd.watch server: a REST (and, in later
 // milestones, WebSocket) API over a local btcd node.
 package main
 
@@ -15,12 +15,12 @@ import (
 
 	"github.com/btcsuite/btcd/btcjson"
 
-	"btcdwatch.com/internal/api"
-	"btcdwatch.com/internal/chain"
-	"btcdwatch.com/internal/config"
-	"btcdwatch.com/internal/explorer"
-	"btcdwatch.com/internal/node"
-	"btcdwatch.com/internal/price"
+	"btcd.watch/internal/api"
+	"btcd.watch/internal/chain"
+	"btcd.watch/internal/config"
+	"btcd.watch/internal/explorer"
+	"btcd.watch/internal/node"
+	"btcd.watch/internal/price"
 )
 
 func main() {

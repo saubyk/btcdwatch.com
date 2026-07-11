@@ -5,7 +5,7 @@ import (
 
 	"github.com/btcsuite/btcd/chaincfg/v2"
 
-	"btcdwatch.com/internal/chain"
+	"btcd.watch/internal/chain"
 )
 
 type MempoolStats struct {

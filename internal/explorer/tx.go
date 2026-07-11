@@ -15,8 +15,8 @@ import (
 	"github.com/btcsuite/btcd/chaincfg/v2"
 	"github.com/btcsuite/btcd/chainhash/v2"
 
-	"btcdwatch.com/internal/chain"
-	"btcdwatch.com/internal/node"
+	"btcd.watch/internal/chain"
+	"btcd.watch/internal/node"
 )
 
 // ErrTxNotFound is returned when the node has no information about a txid.

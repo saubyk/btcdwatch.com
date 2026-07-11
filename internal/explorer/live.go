@@ -3,7 +3,7 @@ package explorer
 import (
 	"time"
 
-	"btcdwatch.com/internal/node"
+	"btcd.watch/internal/node"
 )
 
 // The live feeds — stats, fees, and the mempool update — are recomputed

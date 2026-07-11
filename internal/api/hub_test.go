@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"btcdwatch.com/internal/explorer"
+	"btcd.watch/internal/explorer"
 )
 
 // fakeClient builds a wsClient without a real connection; writePump never

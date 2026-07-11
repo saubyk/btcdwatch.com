@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"time"
 
-	"btcdwatch.com/internal/explorer"
+	"btcd.watch/internal/explorer"
 )
 
 // tickInterval drives periodic pushes: watched-pending queue positions and

@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"btcdwatch.com/internal/chain"
-	"btcdwatch.com/internal/explorer"
-	"btcdwatch.com/internal/node"
+	"btcd.watch/internal/chain"
+	"btcd.watch/internal/explorer"
+	"btcd.watch/internal/node"
 )
 
 // Cache-Control helpers. Responses embedding confirmation counts change
