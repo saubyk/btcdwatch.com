@@ -61,8 +61,12 @@ func TestStats(t *testing.T) {
 	if stats.Halving.BlocksRemaining != 130 {
 		t.Errorf("halving blocks = %d, want 130", stats.Halving.BlocksRemaining)
 	}
-	if stats.Halving.EtaSeconds != 130*60 {
-		t.Errorf("halving eta = %d, want %d", stats.Halving.EtaSeconds, 130*60)
+	// Halving ETA is blocks-remaining x the network TARGET interval
+	// (regtest: 10 min), not the measured mean — long horizons follow
+	// the difficulty retarget, not short-window luck.
+	wantHalvingEta := int64(130 * chaincfg.RegressionNetParams.TargetTimePerBlock.Seconds())
+	if stats.Halving.EtaSeconds != wantHalvingEta {
+		t.Errorf("halving eta = %d, want %d", stats.Halving.EtaSeconds, wantHalvingEta)
 	}
 	if stats.Price == nil || stats.Price.USD != 100_000 || stats.Price.Source != "static" {
 		t.Errorf("price = %+v", stats.Price)
