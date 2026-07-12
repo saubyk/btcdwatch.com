@@ -167,6 +167,14 @@ func (s *Service) computeStats() (*Stats, error) {
 	}
 
 	blocksRemaining := chain.BlocksUntilHalving(tip, s.params)
+	// The halving ETA uses the network TARGET rate, not the measured
+	// mean: difficulty retargeting pulls the long-run average back to
+	// target every 2016 blocks, while the 10-block mean carries ±30%
+	// Poisson noise — multiplied by ~90k blocks that swung the headline
+	// by hundreds of days between refreshes. The measured mean stays in
+	// use for the short-horizon numbers (next-block ETA, pending ETAs).
+	halvingEta := blocksRemaining *
+		int64(s.params.TargetTimePerBlock.Seconds())
 
 	stats := &Stats{
 		Network:     s.params.Name,
@@ -181,7 +189,7 @@ func (s *Service) computeStats() (*Stats, error) {
 		AvgBlockIntervalSeconds: int64(interval.Seconds()),
 		Halving: HalvingStats{
 			BlocksRemaining: blocksRemaining,
-			EtaSeconds:      blocksRemaining * int64(interval.Seconds()),
+			EtaSeconds:      halvingEta,
 		},
 	}
 
