@@ -254,8 +254,12 @@ transaction**.
 ### `GET /api/stats`
 
 Stats, fees, and the WS mempool update are **cache-served**: one background single-flight
-refresh (every 5s while read, with the same 2-minute wedged-refresh watchdog as the sync check)
-recomputes all three, and requests always get the last computed values instantly. btcd blocks
+refresh (a dedicated 5s ticker, plus a kick on any read when one is due, with the same 2-minute
+wedged-refresh watchdog as the sync check) recomputes all three, and requests always get the
+last computed values instantly. The ticker runs regardless of traffic — when refreshes were
+demand-only, the cache froze while the site had no viewers and the first visitor's initial
+paint showed a block height from whenever the previous visitor left, corrected only on the next
+hub tick. btcd blocks
 the RPCs these feeds need (`getrawmempoolverbose` reads the UTXO cache, header lookups take the
 chain lock) for minutes while flushing its UTXO cache — computing on the request path hung
 `/api/stats` past Cloudflare's 100s origin timeout. A refresh that fails keeps the previous

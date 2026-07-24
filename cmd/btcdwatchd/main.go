@@ -98,6 +98,10 @@ func run() error {
 	hubCtx, stopHub := context.WithCancel(context.Background())
 	defer stopHub()
 	go hub.Run(hubCtx)
+	// Keep the live cache warm even with zero viewers, so the first
+	// visitor after a quiet stretch sees the current block height instead
+	// of numbers frozen when the previous visitor left.
+	go svc.RunLiveRefresh(hubCtx)
 
 	backend.Start(node.Handlers{
 		OnConnect: func() {

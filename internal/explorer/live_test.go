@@ -50,6 +50,35 @@ func TestLiveCache(t *testing.T) {
 	}
 }
 
+// The refresh loop must warm the cache without any request driving it:
+// demand-only refreshes left the cache frozen while the site had no
+// viewers, so the first visitor's initial paint showed a block height
+// from whenever the previous visitor left.
+func TestLiveRefreshLoopWarmsWithoutRequests(t *testing.T) {
+	m := newMockBackend()
+	installChain(m, 20, 60*time.Second)
+	s := newTestService(m)
+	s.liveEvery = time.Millisecond
+
+	go s.RunLiveRefresh(t.Context())
+
+	deadline := time.Now().Add(5 * time.Second)
+	for {
+		// Peek at the cache directly — calling Stats() would kick a
+		// demand refresh and defeat the point of the test.
+		s.liveMu.Lock()
+		warmed := s.live.stats != nil
+		s.liveMu.Unlock()
+		if warmed {
+			return
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("live cache never warmed without a request")
+		}
+		time.Sleep(time.Millisecond)
+	}
+}
+
 // Stats must answer instantly from cache even when the node has stopped
 // answering RPC — /api/stats hung past Cloudflare's 100s origin timeout
 // when btcd stalled mid-flush, because it computed on the request path.

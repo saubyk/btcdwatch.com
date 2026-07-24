@@ -20,6 +20,12 @@ const tickInterval = 10 * time.Second
 // contraction).
 const mempoolPushInterval = 2 * time.Second
 
+// clientLogInterval paces the viewer-count journal line: the connected
+// client count is logged at most this often, and only when it changed
+// since the last line — a rough "is anyone on the site" gauge without
+// per-connection log noise.
+const clientLogInterval = 5 * time.Minute
+
 // StatsFunc / TxFunc / MempoolFunc / BlockFlashFunc decouple the hub from
 // the explorer service so tests can inject fakes.
 type (
@@ -125,6 +131,9 @@ func (h *Hub) Run(ctx context.Context) {
 	defer ticker.Stop()
 	mpTicker := time.NewTicker(h.mpInterval)
 	defer mpTicker.Stop()
+	logTicker := time.NewTicker(clientLogInterval)
+	defer logTicker.Stop()
+	loggedClients := 0
 
 	for {
 		select {
@@ -196,6 +205,12 @@ func (h *Hub) Run(ctx context.Context) {
 
 		case <-ticker.C:
 			h.pushAll()
+
+		case <-logTicker.C:
+			if n := len(h.clients); n != loggedClients {
+				loggedClients = n
+				slog.Info("ws clients", "count", n)
+			}
 		}
 	}
 }

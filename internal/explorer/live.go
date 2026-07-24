@@ -1,6 +1,7 @@
 package explorer
 
 import (
+	"context"
 	"time"
 
 	"btcd.watch/internal/node"
@@ -74,6 +75,25 @@ func (s *Service) refreshLive() {
 // (re)connect serve fresh values instead of node_unavailable.
 func (s *Service) WarmLive() {
 	s.liveSnapshot()
+}
+
+// RunLiveRefresh keeps the live cache warm regardless of traffic. Without
+// it the cache only refreshes on demand, so the first visitor after a
+// quiet stretch was served numbers frozen at whatever was current when
+// the previous visitor left — a stale block height on first paint,
+// corrected only when the lazily kicked recompute landed and the next hub
+// tick delivered it. Cancel the context to stop.
+func (s *Service) RunLiveRefresh(ctx context.Context) {
+	ticker := time.NewTicker(s.liveEvery)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			s.liveSnapshot()
+		}
+	}
 }
 
 // Stats returns the cached dashboard payload. ErrUnavailable until the

@@ -161,6 +161,9 @@ type Service struct {
 	liveAttemptAt time.Time
 	liveKickedAt  time.Time
 	liveInFlight  bool
+	// liveEvery is RunLiveRefresh's tick (liveRefreshEvery; shortened by
+	// tests).
+	liveEvery time.Duration
 }
 
 func NewService(backend node.Backend, cfg Config) *Service {
@@ -169,15 +172,16 @@ func NewService(backend node.Backend, cfg Config) *Service {
 		maxScan = 2000
 	}
 	return &Service{
-		backend:  backend,
-		params:   cfg.Params,
-		mempool:  NewMempool(backend),
-		priceUSD: cfg.Price,
-		floors:   cfg.Floors,
-		maxScan:  maxScan,
-		prevouts: newLRU[prevout](4096),
-		headers:  newLRU[*btcjson.GetBlockHeaderVerboseResult](1024),
-		totals:   newLRU[addressTotals](256),
+		backend:   backend,
+		params:    cfg.Params,
+		mempool:   NewMempool(backend),
+		priceUSD:  cfg.Price,
+		floors:    cfg.Floors,
+		maxScan:   maxScan,
+		prevouts:  newLRU[prevout](4096),
+		headers:   newLRU[*btcjson.GetBlockHeaderVerboseResult](1024),
+		totals:    newLRU[addressTotals](256),
+		liveEvery: liveRefreshEvery,
 		// Until the first check lands, gated networks are assumed to be
 		// syncing: the safe answer while the node's state is unknown.
 		syncing: tipAgeGated(cfg.Params),
